@@ -133,7 +133,12 @@ for (const [key, value] of Object.entries(selectedNode)) {
     let subUl = document.createElement('ul');
     for (const [subKey, subValue] of Object.entries(value)) {
       let subLi = document.createElement('li');
-      subLi.textContent = `${subKey}: ${subValue}`;
+      if (typeof subValue=="string" &&  subValue.startsWith('http') ) {
+        subLi.innerHTML = `<a href="${subValue}" target="_blank">${subValue}</a>`
+      }else{
+        subLi.textContent = `${subKey}: ${subValue}`
+      }
+      //subLi.textContent = typeof subValue=="string" &&  subValue.startsWith('http') ? `<a href="${subValue}" target="_blank">${subValue}</a>` : `${subKey}: ${subValue}`;
       subUl.appendChild(subLi);
     }
     ul.appendChild(subUl);
