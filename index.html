@@ -1,0 +1,130 @@
+<head>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+
+  <script src="http://unpkg.com/3d-force-graph"></script>
+  <!--  <script src="../../dist/3d-force-graph.js"></script>-->
+</head>
+
+<body>
+  <div id="3d-graph"></div>
+
+  <script>
+    const elem = document.getElementById("3d-graph");
+    let selectif = false;
+    let intersting_fields = ["com_nom", "dep_nom", "aca_nom", "bat_campus"];
+    let nodes = [];
+    let links = [];
+
+    let source =
+      "../datasets/fr-esr-les-lieux-inspirants-de-l-enseignement-superieur.json";
+    // permalink https://www.data.gouv.fr/fr/datasets/les-lieux-inspirants-de-lenseignement-superieur/
+
+    // let source =
+    //   "https://www.data.gouv.fr/fr/datasets/r/01ac7c17-5d11-41b5-8a51-ee82669e33c8";
+
+    function addNodeIfNotExist(nom, key, value) {
+      let exist = nodes.find((node) => node.id === value);
+      // console.log("exist", exist);
+      if (!exist) {
+        nodes.push({
+          id: value,
+          type: key,
+          name: value,
+        });
+      }
+
+      links.push({
+        source: nom,
+        target: value,
+        name: key,
+      });
+    }
+
+    function updateGraph(json) {
+      for (let i = 0; i < json.length; i++) {
+        let nom = json[i].fields.espace_nom;
+        nodes.push({
+          id: nom,
+          title: nom,
+          name: json[i].fields.espace_nom,
+          description: json[i].fields.espace_description,
+          fields: json[i].fields,
+          type: "lieu",
+        });
+
+        for (let [key, value] of Object.entries(json[i].fields)) {
+          // console.log(key, value);
+
+          if (typeof value === "string") {
+            let multi = value.split(";");
+            //console.log(multi);
+
+            for (let i = 0; i < multi.length; i++) {
+              if (selectif) {
+                if (intersting_fields.includes(key)) {
+                  //console.log(nom, key, value);
+                  addNodeIfNotExist(nom, key, multi[i]);
+                }
+              } else if (
+                value != "Oui" &&
+                value != "Non" &&
+                typeof value === "string"
+              ) {
+                addNodeIfNotExist(nom, key, multi[i]);
+              }
+            }
+          }
+        }
+      }
+
+      console.log("nodes", nodes);
+
+      // for (let i = 0; i < json.length; i++) {
+      //     nodes.push({id: json[i].fields.lieu_nom})
+      //   links.push({
+      //     source: json[i].fields.espace_nom,
+      //     target: json[i].fields.lieu_nom,
+      //   });
+      // }
+
+      const gData = {
+        nodes: nodes,
+        links: links,
+      };
+
+      const Graph = ForceGraph3D()(elem)
+        .graphData(gData)
+        //.jsonUrl(json)
+        .nodeAutoColorBy("type")
+        //.nodeLabel((node) => `${node.user}: ${node.description}`)
+        .onNodeClick((node) => {
+          console.log(node);
+        });
+      // .onNodeClick(node => window.open(`https://bl.ocks.org/${node.user}/${node.id}`, '_blank'));
+
+      //   const Graph = ForceGraph3D()(elem)
+      //     .jsonUrl(json)
+      //     .nodeAutoColorBy('user')
+      //     .nodeLabel(node => `${node.fileds.espace_nom}: ${node.description}`)
+      //     .onNodeClick(node => window.open(`https://bl.ocks.org/${node.user}/${node.id}`, '_blank'));
+    }
+
+    fetch(source)
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+
+        updateGraph(json);
+      });
+
+    //   const Graph = ForceGraph3D()(elem)
+    //     .jsonUrl(
+    //     .nodeAutoColorBy('user')
+    //     .nodeLabel(node => `${node.fileds.espace_nom}: ${node.description}`)
+    //     .onNodeClick(node => window.open(`https://bl.ocks.org/${node.user}/${node.id}`, '_blank'));
+  </script>
+</body>
