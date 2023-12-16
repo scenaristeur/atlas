@@ -130,9 +130,26 @@
 
 
 function populateRetroLiens(selectedNode) {
+  let retroDiv = document.getElementById("retroLiens")
+  retroDiv.innerHTML = "";
+  let liste = document.createElement("ul");
+  retroDiv.appendChild(liste);
+
+
   let retro = links.filter((l) => l.target.id === selectedNode.id);
   console.log("retro",retro)
-  document.getElementById("retroLiens").innerHTML = JSON.stringify(retro)
+
+  retro.forEach((l) => {
+    let li = document.createElement("li");
+
+    li.appendChild(document.createTextNode(l.name + " : "));
+    let btn = document.createElement("button");
+    btn.textContent = JSON.stringify(l.source.id)
+    li.appendChild(btn);
+    //li.textContent = l.name + " : " + JSON.stringify(l.source.id)
+    liste.appendChild(li);
+  });
+
   // let links = [];
   // for (const [key, value] of Object.entries(selectedNode)) {
   //   if (key == "fields") {
