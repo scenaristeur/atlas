@@ -132,6 +132,9 @@
 function populateRetroLiens(selectedNode) {
   let retroDiv = document.getElementById("retroLiens")
   retroDiv.innerHTML = "";
+  let retroTitle = document.createElement("h2")
+  retroTitle.textContent = "Retro"
+  retroDiv.appendChild(retroTitle)
   let liste = document.createElement("ul");
   retroDiv.appendChild(liste);
 
@@ -145,6 +148,16 @@ function populateRetroLiens(selectedNode) {
     li.appendChild(document.createTextNode(l.name + " : "));
     let btn = document.createElement("button");
     btn.textContent = JSON.stringify(l.source.id)
+    btn.id = JSON.stringify(l.source.id)
+    btn.type="button" 
+    btn.classList.add("btn");
+    btn.classList.add("btn-primary");
+   // btn.class="btn btn-primary"
+    
+    btn.addEventListener("click", (e) => {
+      console.log(e.target.id)
+      // console.log(btn.getAttributes("id"))
+    })
     li.appendChild(btn);
     //li.textContent = l.name + " : " + JSON.stringify(l.source.id)
     liste.appendChild(li);
