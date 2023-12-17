@@ -6,3 +6,13 @@
 npx http-serve
 
 ```
+
+
+![global](/images/global.png)
+
+
+![details](/images/details.png)
+
+
+![retro](/images/retro.png)
+
