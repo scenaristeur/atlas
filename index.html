@@ -4,17 +4,11 @@
       margin: 0;
     }
   </style>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-    crossorigin="anonymous"
-  />
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-    crossorigin="anonymous"
-  ></script>
+    crossorigin="anonymous"></script>
 
   <script src="https://unpkg.com/3d-force-graph@1.73.0/dist/3d-force-graph.min.js"></script>
   <!--  <script src="../../dist/3d-force-graph.js"></script>-->
@@ -33,30 +27,15 @@
         </li>
       </ul> -->
 
-  <button
-    class="btn btn-info"
-    type="button"
-    data-bs-toggle="offcanvas"
-    data-bs-target="#offcanvasExample"
-    aria-controls="offcanvasExample"
-  >
+  <button class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+    aria-controls="offcanvasExample">
     Rechercher
   </button>
 
-  <div
-    class="offcanvas offcanvas-start"
-    tabindex="-1"
-    id="offcanvasExample"
-    aria-labelledby="offcanvasExampleLabel"
-  >
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
       <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="offcanvas"
-        aria-label="Close"
-      ></button>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
       <div>
@@ -64,16 +43,12 @@
         have chosen. Like, text, images, lists, etc.
       </div>
       <div class="dropdown mt-3">
-        <button
-          class="btn btn-secondary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-        >
-          Dropdown button
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          Préselection
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Action</a></li>
-          <li><a class="dropdown-item" href="#">Another action</a></li>
+          <li><a class="dropdown-item" href="#">Etablissements</a></li>
+          <li><a class="dropdown-item" href="#">Financements</a></li>
           <li><a class="dropdown-item" href="#">Something else here</a></li>
         </ul>
       </div>
@@ -89,7 +64,7 @@
 
   <script>
     const elem = document.getElementById("3d-graph");
-    let selectif = false;
+    let selectif = true;
     let intersting_fields = ["com_nom", "dep_nom", "aca_nom", "bat_campus"];
     let technique_fields = [
       "__threeObj",
@@ -104,6 +79,7 @@
     ];
     let nodes = [];
     let links = [];
+    let data_props = []
 
     let source =
       "./datasets/fr-esr-les-lieux-inspirants-de-l-enseignement-superieur.json";
@@ -115,6 +91,7 @@
     function addNodeIfNotExist(nom, key, value) {
       let exist = nodes.find((node) => node.id === value);
       // console.log("exist", exist);
+
       if (!exist) {
         nodes.push({
           id: value,
@@ -131,56 +108,56 @@
     }
 
 
-function populateRetroLiens(selectedNode) {
-  let retroDiv = document.getElementById("retroLiens")
-  retroDiv.innerHTML = "";
-  let retroTitle = document.createElement("h2")
-  retroTitle.textContent = "Retro"
-  retroDiv.appendChild(retroTitle)
-  let liste = document.createElement("ul");
-  retroDiv.appendChild(liste);
+    function populateRetroLiens(selectedNode) {
+      let retroDiv = document.getElementById("retroLiens")
+      retroDiv.innerHTML = "";
+      let retroTitle = document.createElement("h2")
+      retroTitle.textContent = "Retro"
+      retroDiv.appendChild(retroTitle)
+      let liste = document.createElement("ul");
+      retroDiv.appendChild(liste);
 
 
-  let retro = links.filter((l) => l.target.id === selectedNode.id);
-  console.log("retro",retro)
+      let retro = links.filter((l) => l.target.id === selectedNode.id);
+      console.log("retro", retro)
 
-  retro.forEach((l) => {
-    let li = document.createElement("li");
+      retro.forEach((l) => {
+        let li = document.createElement("li");
 
-    li.appendChild(document.createTextNode(l.name + " : "));
-    let btn = document.createElement("button");
-    btn.textContent = JSON.stringify(l.source.id)
-    btn.id = JSON.stringify(l.source.id)
-    btn.type="button" 
-    btn.classList.add("btn");
-    btn.classList.add("btn-primary");
-   // btn.class="btn btn-primary"
-    
-    btn.addEventListener("click", (e) => {
-      console.log(e.target.id)
-      // console.log(btn.getAttributes("id"))
-    })
-    li.appendChild(btn);
-    //li.textContent = l.name + " : " + JSON.stringify(l.source.id)
-    liste.appendChild(li);
-  });
+        li.appendChild(document.createTextNode(l.name + " : "));
+        let btn = document.createElement("button");
+        btn.textContent = JSON.stringify(l.source.id)
+        btn.id = JSON.stringify(l.source.id)
+        btn.type = "button"
+        btn.classList.add("btn");
+        btn.classList.add("btn-primary");
+        // btn.class="btn btn-primary"
 
-  // let links = [];
-  // for (const [key, value] of Object.entries(selectedNode)) {
-  //   if (key == "fields") {
-  //     for (const [subKey, subValue] of Object.entries(value)) {
-  //       if (typeof subValue == "string" && subValue.startsWith("http")) {
-  //         links.push({
-  //           source: selectedNode.id,
-  //           target: subValue,
-  //           name: subKey,
-  //         });
-  //       }
-  //     }
-  //   }
-  // }
-  // return links;
-}
+        btn.addEventListener("click", (e) => {
+          console.log(e.target.id)
+          // console.log(btn.getAttributes("id"))
+        })
+        li.appendChild(btn);
+        //li.textContent = l.name + " : " + JSON.stringify(l.source.id)
+        liste.appendChild(li);
+      });
+
+      // let links = [];
+      // for (const [key, value] of Object.entries(selectedNode)) {
+      //   if (key == "fields") {
+      //     for (const [subKey, subValue] of Object.entries(value)) {
+      //       if (typeof subValue == "string" && subValue.startsWith("http")) {
+      //         links.push({
+      //           source: selectedNode.id,
+      //           target: subValue,
+      //           name: subKey,
+      //         });
+      //       }
+      //     }
+      //   }
+      // }
+      // return links;
+    }
 
 
 
@@ -251,6 +228,13 @@ function populateRetroLiens(selectedNode) {
     // const selectedNode = 'someNode';
     // populateCurrentNodeRenderer(selectedNode);
 
+    function addDataProps(prop) {
+
+      data_props[prop] == undefined ? data_props[prop] = 0 : data_props[prop]++
+      console.log(data_props)
+    }
+
+
     function updateGraph(json) {
       for (let i = 0; i < json.length; i++) {
         let nom = json[i].fields.espace_nom;
@@ -265,6 +249,7 @@ function populateRetroLiens(selectedNode) {
 
         for (let [key, value] of Object.entries(json[i].fields)) {
           // console.log(key, value);
+          addDataProps(key)
 
           if (typeof value === "string") {
             let multi = value.split(";");
@@ -275,6 +260,7 @@ function populateRetroLiens(selectedNode) {
                 if (intersting_fields.includes(key)) {
                   //console.log(nom, key, value);
                   addNodeIfNotExist(nom, key, multi[i]);
+
                 }
               } else if (
                 value != "Oui" &&
