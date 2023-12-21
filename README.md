@@ -30,3 +30,8 @@ npx http-serve
 
 - https://stackoverflow.com/questions/44490627/how-to-import-export-a-class-in-vanilla-javascript-js
 - https://bobbyhadz.com/blog/javascript-import-class-from-another-file
+
+
+# autres atlas
+- https://www.banquedesterritoires.fr/etudes-atlas
+- https://www.union-habitat.org/centre-de-ressources/economie-du-logement/atlas-du-logement-et-des-territoires-edition-2021

@@ -230,7 +230,7 @@ function addDataProps(prop) {
 }
 
 async function updateSolidGraph(solidDataset) {
-  console.log("updateSolidGraph", solidDataset);
+  //console.log("updateSolidGraph", solidDataset);
   for await (const resource of solidDataset) {
     console.log("resource", resource);
     let id = resource["@id"];
@@ -241,11 +241,25 @@ async function updateSolidGraph(solidDataset) {
 
     let exist = nodes.find((n) => n.id === id);
     if (!exist) {
-      console.log("push", node);
+      //console.log("push", node);
       nodes.push(node);
     } else {
       console.log("possible update to ", id);
     }
+
+    for (const [key, value] of Object.entries(reource)) {
+      console.log(`${key}: ${value} ${typeof value}`);
+
+
+
+
+      
+    }
+
+
+
+
+
   }
   console.log("nodes", nodes);
   gData = {
