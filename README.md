@@ -25,3 +25,6 @@ npx http-serve
 # atlas Solid
 
 - https://spoggy-test2.solidcommunity.net/public/bookmarks.ttl
+
+- voir pour importer une classe
+  https://stackoverflow.com/questions/44490627/how-to-import-export-a-class-in-vanilla-javascript-js

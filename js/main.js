@@ -17,7 +17,8 @@ let links = [];
 let data_props = [];
 
 //let source =   "./datasets/fr-esr-les-lieux-inspirants-de-l-enseignement-superieur.json";
-let source = "https://spoggy-test2.solidcommunity.net/public/bookmarks.ttl";
+//let source = "https://spoggy-test2.solidcommunity.net/public/bookmarks.ttl";
+let source = "https://spoggy-test2.solidcommunity.net/public/";
 // permalink https://www.data.gouv.fr/fr/datasets/les-lieux-inspirants-de-lenseignement-superieur/
 
 // let source =
@@ -242,12 +243,28 @@ let fetch_options = {};
 let headers = { Accept: "application/ld+json" };
 fetch_options.headers = headers;
 
+const context = {
+  name: "http://schema.org/name",
+  homepage: { "@id": "http://schema.org/url", "@type": "@id" },
+  image: { "@id": "http://schema.org/image", "@type": "@id" },
+};
+
 fetch(source, fetch_options)
   .then((response) => response.json())
-  .then((json) => {
+  .then(async (json) => {
     console.log(json);
-
-    updateGraph(json);
+    if (json["@context"] != undefined) {
+      console.log("On a du jsonld", json);
+      let compacted = await jsonld.compact(json, context);
+      let expanded = await jsonld.expand(json);
+      const flattened = await jsonld.flatten(json);
+      //const framed = await jsonld.frame(doc, frame);
+      console.log("compacted", compacted);
+      console.log("expanded", expanded);
+      console.log("flattened", flattened);
+    } else {
+      updateGraph(json);
+    }
   });
 
 //   const Graph = ForceGraph3D()(elem)
@@ -262,11 +279,6 @@ const doc = {
   "http://schema.org/image": {
     "@id": "http://manu.sporny.org/images/manu.png",
   },
-};
-const context = {
-  name: "http://schema.org/name",
-  homepage: { "@id": "http://schema.org/url", "@type": "@id" },
-  image: { "@id": "http://schema.org/image", "@type": "@id" },
 };
 
 async function test_jsonld() {
