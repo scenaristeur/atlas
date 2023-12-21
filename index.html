@@ -1,9 +1,17 @@
 <html>
-<title>Atlas Labs</title>
-
-
 
 <head>
+  <title>Atlas Labs</title>
+  <!-- https://www.ionos.fr/digitalguide/sites-internet/creation-de-sites-internet/tutoriel-json-ld-dapres-schemaorg/-->
+  <script type="application/ld+json">
+      {
+        "@context": "http://schema.org/",
+        "@type": "Person",
+        "name": "Fada",
+        "homepage": "http://scenaristeur.github.io",
+        "url": "http://scenaristeur.github.io"
+      }
+  </script>
   <style>
     body {
       margin: 0;
@@ -16,6 +24,9 @@
     crossorigin="anonymous"></script>
 
   <script src="https://unpkg.com/3d-force-graph@1.73.0/dist/3d-force-graph.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsonld/8.3.2/jsonld.min.js"
+    integrity="sha512-z/qF7jT9tc2CTR6DsN5MzG9rAA0Eu8uMwZoUtYF+g8LEN3wiLNAfsmHcAhS5tc451SFj8Ix/fNiVXLNEd2njIA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!--  <script src="../../dist/3d-force-graph.js"></script>-->
 </head>
 

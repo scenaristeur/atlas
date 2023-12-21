@@ -255,3 +255,37 @@ fetch(source, fetch_options)
 //     .nodeAutoColorBy('user')
 //     .nodeLabel(node => `${node.fileds.espace_nom}: ${node.description}`)
 //     .onNodeClick(node => window.open(`https://bl.ocks.org/${node.user}/${node.id}`, '_blank'));
+
+const doc = {
+  "http://schema.org/name": "Manu Sporny",
+  "http://schema.org/url": { "@id": "http://manu.sporny.org/" },
+  "http://schema.org/image": {
+    "@id": "http://manu.sporny.org/images/manu.png",
+  },
+};
+const context = {
+  name: "http://schema.org/name",
+  homepage: { "@id": "http://schema.org/url", "@type": "@id" },
+  image: { "@id": "http://schema.org/image", "@type": "@id" },
+};
+
+async function test_jsonld() {
+  console.log("jsonld", jsonld);
+
+  // compact a document according to a particular context
+  const compacted = await jsonld.compact(doc, context);
+  console.log(JSON.stringify(compacted, null, 2));
+  /* Output:
+{
+  "@context": {...},
+  "name": "Manu Sporny",
+  "homepage": "http://manu.sporny.org/",
+  "image": "http://manu.sporny.org/images/manu.png"
+}
+*/
+
+  // compact using URLs
+  //const compacted = await jsonld.compact('http://example.org/doc', 'http://example.org/context', ...);
+}
+
+test_jsonld();
