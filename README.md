@@ -26,5 +26,7 @@ npx http-serve
 
 - https://spoggy-test2.solidcommunity.net/public/bookmarks.ttl
 
-- voir pour importer une classe
-  https://stackoverflow.com/questions/44490627/how-to-import-export-a-class-in-vanilla-javascript-js
+# voir pour importer une classe
+
+- https://stackoverflow.com/questions/44490627/how-to-import-export-a-class-in-vanilla-javascript-js
+- https://bobbyhadz.com/blog/javascript-import-class-from-another-file

@@ -1,3 +1,65 @@
+let sources = [
+  {
+    name: "Les lieux inspirants de l'enseignement supérieur",
+    url: "./datasets/fr-esr-les-lieux-inspirants-de-l-enseignement-superieur.json",
+  },
+  {
+    name: "Spoggy-test2 Bookmarks",
+    url: "https://spoggy-test2.solidcommunity.net/public/bookmarks.ttl",
+  },
+  {
+    name: "Spoggy-test2 Public Folder",
+    url: "https://spoggy-test2.solidcommunity.net/public/",
+  },
+  {
+    name: "Spoggy-test2 WebId / Profile/card#me",
+    url: "https://spoggy-test2.solidcommunity.net/profile/card#me",
+  },
+  //let source = ("./datasets/fr-esr-les-lieux-inspirants-de-l-enseignement-superieur.json");
+  //let source = "https://spoggy-test2.solidcommunity.net/public/bookmarks.ttl";
+  //let source = "https://spoggy-test2.solidcommunity.net/public/";
+  //let source = "https://spoggy-test2.solidcommunity.net/profile/card#me";
+  // permalink https://www.data.gouv.fr/fr/datasets/les-lieux-inspirants-de-lenseignement-superieur/
+
+  // let source =
+  //   "https://www.data.gouv.fr/fr/datasets/r/01ac7c17-5d11-41b5-8a51-ee82669e33c8";
+];
+let source = sources[2].url;
+let replace = false;
+
+let nodes = [];
+let links = [];
+let data_props = [];
+
+let gData = {
+  nodes: nodes,
+  links: links,
+};
+
+const source_selector = document.getElementById("source-selector");
+source_selector.innerHTML = "";
+for (let source of sources) {
+  console.log(source);
+  let opt = document.createElement("option");
+  opt.innerHTML = source.name;
+  opt.value = source.url;
+  source_selector.appendChild(opt);
+}
+source_selector.onchange = function (e) {
+  console.log(e, e.target.value);
+  source = e.target.value;
+  if (replace == true) {
+    nodes = [];
+    links = [];
+    gData = {
+      nodes: nodes,
+      links: links,
+    };
+    Graph.graphData(gData);
+  }
+  load_source();
+};
+
 const elem = document.getElementById("3d-graph");
 let selectif = true;
 let intersting_fields = ["com_nom", "dep_nom", "aca_nom", "bat_campus"];
@@ -12,17 +74,19 @@ let technique_fields = [
   "vy",
   "vz",
 ];
-let nodes = [];
-let links = [];
-let data_props = [];
 
-//let source =   "./datasets/fr-esr-les-lieux-inspirants-de-l-enseignement-superieur.json";
-//let source = "https://spoggy-test2.solidcommunity.net/public/bookmarks.ttl";
-let source = "https://spoggy-test2.solidcommunity.net/public/";
-// permalink https://www.data.gouv.fr/fr/datasets/les-lieux-inspirants-de-lenseignement-superieur/
-
-// let source =
-//   "https://www.data.gouv.fr/fr/datasets/r/01ac7c17-5d11-41b5-8a51-ee82669e33c8";
+const Graph = ForceGraph3D()(elem)
+  .graphData(gData)
+  //.jsonUrl(json)
+  .nodeAutoColorBy("type")
+  //.nodeLabel((node) => `${node.user}: ${node.description}`)
+  .onNodeClick((node) => {
+    console.log(node);
+    //currentNode = node
+    const bsOffcanvas = new bootstrap.Offcanvas("#offcanvasExample");
+    bsOffcanvas.show();
+    populateCurrentNodeRenderer(node);
+  });
 
 function addNodeIfNotExist(nom, key, value) {
   let exist = nodes.find((node) => node.id === value);
@@ -162,7 +226,33 @@ function populateCurrentNodeRenderer(selectedNode) {
 
 function addDataProps(prop) {
   data_props[prop] == undefined ? (data_props[prop] = 0) : data_props[prop]++;
-  console.log(data_props);
+  //console.log(data_props);
+}
+
+async function updateSolidGraph(solidDataset) {
+  console.log("updateSolidGraph", solidDataset);
+  for await (const resource of solidDataset) {
+    console.log("resource", resource);
+    let id = resource["@id"];
+    let node = {
+      id: id,
+      name: id,
+    };
+
+    let exist = nodes.find((n) => n.id === id);
+    if (!exist) {
+      console.log("push", node);
+      nodes.push(node);
+    } else {
+      console.log("possible update to ", id);
+    }
+  }
+  console.log("nodes", nodes);
+  gData = {
+    nodes: nodes,
+    links: links,
+  };
+  Graph.graphData(gData);
 }
 
 function updateGraph(json) {
@@ -204,6 +294,11 @@ function updateGraph(json) {
   }
 
   console.log("nodes", nodes);
+  gData = {
+    nodes: nodes,
+    links: links,
+  };
+  Graph.graphData(gData);
 
   // for (let i = 0; i < json.length; i++) {
   //     nodes.push({id: json[i].fields.lieu_nom})
@@ -213,23 +308,6 @@ function updateGraph(json) {
   //   });
   // }
 
-  const gData = {
-    nodes: nodes,
-    links: links,
-  };
-
-  const Graph = ForceGraph3D()(elem)
-    .graphData(gData)
-    //.jsonUrl(json)
-    .nodeAutoColorBy("type")
-    //.nodeLabel((node) => `${node.user}: ${node.description}`)
-    .onNodeClick((node) => {
-      console.log(node);
-      //currentNode = node
-      const bsOffcanvas = new bootstrap.Offcanvas("#offcanvasExample");
-      bsOffcanvas.show();
-      populateCurrentNodeRenderer(node);
-    });
   // .onNodeClick(node => window.open(`https://bl.ocks.org/${node.user}/${node.id}`, '_blank'));
 
   //   const Graph = ForceGraph3D()(elem)
@@ -249,23 +327,28 @@ const context = {
   image: { "@id": "http://schema.org/image", "@type": "@id" },
 };
 
-fetch(source, fetch_options)
-  .then((response) => response.json())
-  .then(async (json) => {
-    console.log(json);
-    if (json["@context"] != undefined) {
-      console.log("On a du jsonld", json);
-      let compacted = await jsonld.compact(json, context);
-      let expanded = await jsonld.expand(json);
-      const flattened = await jsonld.flatten(json);
-      //const framed = await jsonld.frame(doc, frame);
-      console.log("compacted", compacted);
-      console.log("expanded", expanded);
-      console.log("flattened", flattened);
-    } else {
-      updateGraph(json);
-    }
-  });
+function load_source() {
+  fetch(source, fetch_options)
+    .then((response) => response.json())
+    .then(async (json) => {
+      console.log(json);
+      if (json["@context"] != undefined) {
+        console.log("On a du jsonld", json);
+        let compacted = await jsonld.compact(json, context);
+        let expanded = await jsonld.expand(json);
+        const flattened = await jsonld.flatten(json);
+        //const framed = await jsonld.frame(doc, frame);
+        console.log("compacted", compacted);
+        console.log("expanded", expanded);
+        console.log("flattened", flattened);
+        updateSolidGraph(expanded);
+      } else {
+        updateGraph(json);
+      }
+    });
+}
+
+load_source();
 
 //   const Graph = ForceGraph3D()(elem)
 //     .jsonUrl(
