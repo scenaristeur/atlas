@@ -8,6 +8,10 @@ let sources = [
     url: "https://spoggy-test2.solidcommunity.net/public/bookmarks.ttl",
   },
   {
+    name: "Un cv",
+    url: "https://spoggy-test2.solidcommunity.net/public/brains/cv/",
+  },
+  {
     name: "Spoggy-test2 Public Folder",
     url: "https://spoggy-test2.solidcommunity.net/public/",
   },
@@ -24,7 +28,7 @@ let sources = [
   // let source =
   //   "https://www.data.gouv.fr/fr/datasets/r/01ac7c17-5d11-41b5-8a51-ee82669e33c8";
 ];
-let source = sources[2].url;
+let source = sources[0].url;
 let replace = false;
 
 let nodes = [];
@@ -86,6 +90,10 @@ const Graph = ForceGraph3D()(elem)
     const bsOffcanvas = new bootstrap.Offcanvas("#offcanvasExample");
     bsOffcanvas.show();
     populateCurrentNodeRenderer(node);
+    if (node.id.startsWith("http")) {
+      source = node.id;
+      load_source();
+    }
   });
 
 function addNodeIfNotExist(nom, key, value) {
@@ -247,19 +255,21 @@ async function updateSolidGraph(solidDataset) {
       console.log("possible update to ", id);
     }
 
-    for (const [key, value] of Object.entries(reource)) {
-      console.log(`${key}: ${value} ${typeof value}`);
+    for (const [key, value] of Object.entries(resource)) {
+      let arrayValues = Array.isArray(value) ? value : [value];
 
-
-
-
-      
+      for (const v of arrayValues) {
+        console.log(key, v);
+        if (key != "@id") {
+          if (typeof v == "string") {
+            addNodeIfNotExist(id, key, v);
+          } else if (typeof v == "object") {
+            addNodeIfNotExist(id, key, v["@id"]);
+          }
+        }
+      }
+      //console.log(`${key}: ${value} ${Array.isArray(value)}`);
     }
-
-
-
-
-
   }
   console.log("nodes", nodes);
   gData = {
